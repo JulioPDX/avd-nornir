@@ -11,6 +11,7 @@ def deploy_network(task):
         name=f"{task.host.name}: Configuring with NAPALM",
         task=napalm_configure,
         filename=f"configs/{task.host.name}.cfg",
+        replace=True,
     )
 
 
