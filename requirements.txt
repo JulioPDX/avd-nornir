@@ -1,0 +1,6 @@
+pyavd
+nornir
+nornir_ansible
+rich
+black
+pylint
