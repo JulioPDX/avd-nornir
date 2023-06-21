@@ -10,9 +10,9 @@ all:
                 type: spine
               hosts:
                 spine1:
-                  ansible_host: 192.168.0.10
+                  ansible_host: 172.100.100.11
                 spine2:
-                  ansible_host: 192.168.0.11
+                  ansible_host: 172.100.100.12
             ATD_LEAFS:
               vars:
                 type: l3leaf
@@ -20,15 +20,15 @@ all:
                 pod1:
                   hosts:
                     leaf1:
-                      ansible_host: 192.168.0.12
+                      ansible_host: 172.100.100.13
                     leaf2:
-                      ansible_host: 192.168.0.13
+                      ansible_host: 172.100.100.14
                 pod2:
                   hosts:
                     leaf3:
-                      ansible_host: 192.168.0.14
+                      ansible_host: 172.100.100.15
                     leaf4:
-                      ansible_host: 192.168.0.15
+                      ansible_host: 172.100.100.16
         ATD_TENANTS_NETWORKS:
           children:
             ATD_LEAFS:
@@ -37,8 +37,8 @@ all:
             ATD_LEAFS:
 
   vars:
-    ansible_user: arista
-    ansible_password: # Update password with lab credentials
+    ansible_user: admin
+    ansible_password: admin
     ansible_network_os: arista.eos.eos
     # Configure privilege escalation
     ansible_become: true

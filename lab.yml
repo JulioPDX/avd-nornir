@@ -1,0 +1,69 @@
+name: pyavd
+prefix: ""
+
+# Options to connect to nodes
+# docker exec -it <node> Cli
+# ssh admin@<container name>
+
+mgmt:
+  network: statics
+  ipv4-subnet: 172.100.100.0/24
+
+topology:
+  kinds:
+    ceos:
+      image: ceos:4.29.2F
+  nodes:
+    spine1:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.11
+    spine2:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.12
+    leaf1:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.13
+    leaf2:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.14
+    leaf3:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.15
+    leaf4:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.16
+    host1:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.23
+    host2:
+      kind: ceos
+      mgmt-ipv4: 172.100.100.24
+  links:
+    # spine1
+    - endpoints: ["spine1:eth2", "leaf1:eth2"]
+    - endpoints: ["spine1:eth3", "leaf2:eth2"]
+    - endpoints: ["spine1:eth4", "leaf3:eth2"]
+    - endpoints: ["spine1:eth5", "leaf4:eth2"]
+
+    # spine2
+    - endpoints: ["spine2:eth2", "leaf1:eth3"]
+    - endpoints: ["spine2:eth3", "leaf2:eth3"]
+    - endpoints: ["spine2:eth4", "leaf3:eth3"]
+    - endpoints: ["spine2:eth5", "leaf4:eth3"]
+
+    # leaf to leaf
+    - endpoints: ["leaf1:eth1", "leaf2:eth1"]
+    - endpoints: ["leaf1:eth6", "leaf2:eth6"]
+    # leaf to leaf
+    - endpoints: ["leaf3:eth1", "leaf4:eth1"]
+    - endpoints: ["leaf3:eth6", "leaf4:eth6"]
+
+    # leaf to host
+    - endpoints: ["leaf1:eth4", "host1:eth1"]
+    - endpoints: ["leaf1:eth5", "host1:eth3"]
+    - endpoints: ["leaf2:eth4", "host1:eth2"]
+    - endpoints: ["leaf2:eth5", "host1:eth4"]
+    - endpoints: ["leaf3:eth4", "host2:eth1"]
+    - endpoints: ["leaf3:eth5", "host2:eth3"]
+    - endpoints: ["leaf4:eth4", "host2:eth2"]
+    - endpoints: ["leaf4:eth5", "host2:eth4"]

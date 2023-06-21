@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+clab-pyavd/
+.lab.yml.bak
+
 # C extensions
 *.so
 
