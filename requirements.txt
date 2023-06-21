@@ -1,6 +1,8 @@
 pyavd
 nornir
 nornir_ansible
+nornir_napalm
+nornir_utils
 rich
 black
 pylint
