@@ -1,4 +1,4 @@
-pyavd
+pyavd==4.0.0a2
 nornir
 nornir_ansible
 nornir_napalm

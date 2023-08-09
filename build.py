@@ -2,6 +2,7 @@ from pathlib import Path
 from nornir import InitNornir
 from nornir_napalm.plugins.tasks import napalm_configure
 from nornir_utils.plugins.functions import print_result
+from rich import print
 import pyavd
 
 
@@ -39,6 +40,21 @@ def patch_pyeapi_ciphers():
     pyeapi.eapilib.HttpsConnection.connect = connect
 
 
+def create_files(doc_type, content):
+    """Loop over content to create relevant files for hosts."""
+    if not Path(f"{doc_type}").exists():
+        Path(f"{doc_type}").mkdir(parents=True)
+
+    for hostname, doc in content.items():
+        doc_path = f"{doc_type}/{hostname}.md"
+        with open(
+            doc_path,
+            "w",
+            encoding="utf-8",
+        ) as file:
+            file.write(doc)
+
+
 def main():
     """
     Main function that calls deploy_network function
@@ -61,55 +77,36 @@ def main():
 
         hostvars[hostname] = res
 
+    # print(hostvars["leaf1"])
+
     # Validate input and convert types as needed
     pyavd.validate_inputs(hostvars)
 
     # Generate facts
     avd_facts = pyavd.get_avd_facts(hostvars)
+
     structured_configs = {
         hostname: pyavd.get_device_structured_config(
             hostname, hostvars[hostname], avd_facts
         )
         for hostname in hostvars
     }
+
+    # print(structured_configs["leaf1"])
+
     configs = {
         hostname: pyavd.get_device_config(hostname, structured_configs[hostname])
         for hostname in structured_configs
     }
+
+    create_files("configs", configs)
 
     docs = {
         hostname: pyavd.get_device_doc(hostname, structured_configs[hostname])
         for hostname in structured_configs
     }
 
-    # Ensure the 'configs' directory exists
-    if not Path("docs").exists():
-        Path("docs").mkdir(parents=True)
-
-    for hostname, doc in docs.items():
-        doc_path = f"docs/{hostname}.md"
-        with open(
-            doc_path,
-            "w",
-            encoding="utf-8",
-        ) as file:
-            file.write(doc)
-
-    # Ensure the 'configs' directory exists
-    if not Path("configs").exists():
-        Path("configs").mkdir(parents=True)
-
-    for hostname, config in configs.items():
-        config_path = f"configs/{hostname}.cfg"
-        with open(
-            config_path,
-            "w",
-            encoding="utf-8",
-        ) as file:
-            file.write(config)
-
-        # Get byte count of the file
-        print(f"Written config for {hostname} to {config_path}")
+    create_files("docs", docs)
 
     # result = nr.run(task=deploy_network)
 
