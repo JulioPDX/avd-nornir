@@ -40,13 +40,13 @@ def patch_pyeapi_ciphers():
     pyeapi.eapilib.HttpsConnection.connect = connect
 
 
-def create_files(doc_type, content):
+def create_files(doc_type, content, extension):
     """Loop over content to create relevant files for hosts."""
     if not Path(f"{doc_type}").exists():
         Path(f"{doc_type}").mkdir(parents=True)
 
     for hostname, doc in content.items():
-        doc_path = f"{doc_type}/{hostname}.md"
+        doc_path = f"{doc_type}/{hostname}.{extension}"
         with open(
             doc_path,
             "w",
@@ -99,14 +99,14 @@ def main():
         for hostname in structured_configs
     }
 
-    create_files("configs", configs)
+    create_files("configs", configs, "cfg")
 
     docs = {
         hostname: pyavd.get_device_doc(hostname, structured_configs[hostname])
         for hostname in structured_configs
     }
 
-    create_files("docs", docs)
+    create_files("docs", docs, "md")
 
     # result = nr.run(task=deploy_network)
 
