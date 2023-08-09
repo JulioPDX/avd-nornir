@@ -1,24 +1,24 @@
-import os
+from pathlib import Path
 from nornir import InitNornir
 from nornir_napalm.plugins.tasks import napalm_configure
 from nornir_utils.plugins.functions import print_result
 import pyavd
 
 
-def deploy_network(task):
-    """deploying stuff"""
-    _deploy = task.run(
-        name=f"{task.host.name}: Configuring with NAPALM",
-        task=napalm_configure,
-        filename=f"configs/{task.host.name}.cfg",
-        replace=True,
-    )
+# def deploy_network(task):
+#     """deploying stuff"""
+#     _deploy = task.run(
+#         name=f"{task.host.name}: Configuring with NAPALM",
+#         task=napalm_configure,
+#         filename=f"configs/{task.host.name}.cfg",
+#         replace=True,
+#     )
 
 
 def patch_pyeapi_ciphers():
     """
-    Patch pyeapi to set ssl context ciphers, because Python set defaults that might be too high,
-    see https://github.com/python/cpython/blob/3.10/Modules/_ssl.c#L158
+    Patch pyeapi to set ssl context ciphers, because Python set defaults that might
+    be too high, see https://github.com/python/cpython/blob/3.10/Modules/_ssl.c#L158
 
     ```sh
     python -c 'import ssl; print(ssl._DEFAULT_CIPHERS)'
@@ -77,9 +77,27 @@ def main():
         for hostname in structured_configs
     }
 
+    docs = {
+        hostname: pyavd.get_device_doc(hostname, structured_configs[hostname])
+        for hostname in structured_configs
+    }
+
     # Ensure the 'configs' directory exists
-    if not os.path.exists("configs"):
-        os.makedirs("configs")
+    if not Path("docs").exists():
+        Path("docs").mkdir(parents=True)
+
+    for hostname, doc in docs.items():
+        doc_path = f"docs/{hostname}.md"
+        with open(
+            doc_path,
+            "w",
+            encoding="utf-8",
+        ) as file:
+            file.write(doc)
+
+    # Ensure the 'configs' directory exists
+    if not Path("configs").exists():
+        Path("configs").mkdir(parents=True)
 
     for hostname, config in configs.items():
         config_path = f"configs/{hostname}.cfg"
@@ -91,15 +109,11 @@ def main():
             file.write(config)
 
         # Get byte count of the file
-        byte_count = os.path.getsize(config_path)
+        print(f"Written config for {hostname} to {config_path}")
 
-        print(
-            f"Written config for {hostname} to {config_path}, byte count: {byte_count}"
-        )
+    # result = nr.run(task=deploy_network)
 
-    result = nr.run(task=deploy_network)
-
-    print_result(result)
+    # print_result(result)
 
 
 if __name__ == "__main__":
