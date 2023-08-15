@@ -13,7 +13,7 @@ name_servers:
 dns_domain: atd.lab
 
 local_users:
-  admin:
+  - name: admin
     privilege: 15
     role: network-admin
     sha512_password: "$6$GSDvwzmqiRb8Su2X$QIPBWzmhfnnzo4QIoKD7VRb3TvLL6687X.6/e4M.5Dw9iviTTDR.ZKaz7Q3Parul5i8rTgZ/.4ri/ny4El5Jx0"

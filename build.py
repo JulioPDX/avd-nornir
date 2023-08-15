@@ -70,14 +70,13 @@ def main():
         host = nr.inventory.hosts[hostname]
 
         # Using .dict() or .data was not getting the group variables
-        data = host.items()
+        # data = host.items()
         res = {}
-        for k, v in data:
+        for k, v in host.items():
             res[k] = v
 
         hostvars[hostname] = res
 
-    # print(hostvars["leaf1"])
 
     # Validate input and convert types as needed
     pyavd.validate_inputs(hostvars)
