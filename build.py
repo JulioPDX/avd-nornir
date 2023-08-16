@@ -62,7 +62,7 @@ def main():
 
     nr = InitNornir(config_file="config.yml")
 
-    patch_pyeapi_ciphers()
+    # patch_pyeapi_ciphers()
 
     hostvars = {}
 
@@ -77,7 +77,6 @@ def main():
 
         hostvars[hostname] = res
 
-
     # Validate input and convert types as needed
     pyavd.validate_inputs(hostvars)
 
@@ -90,8 +89,6 @@ def main():
         )
         for hostname in hostvars
     }
-
-    # print(structured_configs["leaf1"])
 
     configs = {
         hostname: pyavd.get_device_config(hostname, structured_configs[hostname])
