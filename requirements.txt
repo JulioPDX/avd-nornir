@@ -1,8 +1,9 @@
-pyavd==4.0.0a2
+anta
+black
 nornir
 nornir_ansible
 nornir_napalm
 nornir_utils
-rich
-black
+pyavd==4.0.0a2
 pylint
+rich

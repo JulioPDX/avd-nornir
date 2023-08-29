@@ -1,0 +1,29 @@
+# Load anta.tests.software
+anta.tests.software:
+  - VerifyEOSVersion: # Verifies the device is running one of the allowed EOS version.
+      versions: # List of allowed EOS versions.
+        - 4.30.2F-33092737.4302F (engineering build)
+
+anta.tests.mlag:
+  - VerifyMlagStatus:
+  - VerifyMlagInterfaces:
+  - VerifyMlagConfigSanity:
+
+anta.tests.configuration:
+  - VerifyRunningConfigDiffs:
+
+anta.tests.routing.bgp:
+  - VerifyBGPIPv4UnicastCount:
+      number: 3
+      template_params:
+        - vrf: default
+
+anta.tests.connectivity:
+  - VerifyReachability:
+      template_params:
+        - dst: 8.8.8.8
+          src: management0
+
+anta.tests.vxlan:
+  - VerifyVxlan1Interface:
+  - VerifyVxlanConfigSanity:
