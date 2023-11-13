@@ -1,4 +1,4 @@
-name: pyavd
+name: pyavd2
 prefix: ""
 
 # Options to connect to nodes
@@ -12,58 +12,33 @@ mgmt:
 topology:
   kinds:
     ceos:
-      image: ceos:4.29.2F
+      image: ceos:4.30.2F
+    linux:
+      image: wbitt/network-multitool:alpine-extra
   nodes:
     spine1:
       kind: ceos
       mgmt-ipv4: 172.100.100.11
-    spine2:
-      kind: ceos
-      mgmt-ipv4: 172.100.100.12
     leaf1:
       kind: ceos
       mgmt-ipv4: 172.100.100.13
     leaf2:
       kind: ceos
       mgmt-ipv4: 172.100.100.14
-    leaf3:
-      kind: ceos
-      mgmt-ipv4: 172.100.100.15
-    leaf4:
-      kind: ceos
-      mgmt-ipv4: 172.100.100.16
     host1:
-      kind: ceos
+      kind: linux
       mgmt-ipv4: 172.100.100.23
+      exec:
+        - ip a add 10.1.10.11/24 dev eth1
     host2:
-      kind: ceos
+      kind: linux
       mgmt-ipv4: 172.100.100.24
+      exec:
+        - ip a add 10.1.10.12/24 dev eth1
   links:
     # spine1
-    - endpoints: ["spine1:eth2", "leaf1:eth2"]
-    - endpoints: ["spine1:eth3", "leaf2:eth2"]
-    - endpoints: ["spine1:eth4", "leaf3:eth2"]
-    - endpoints: ["spine1:eth5", "leaf4:eth2"]
+    - endpoints: ["spine1:eth1", "leaf1:eth1"]
+    - endpoints: ["spine1:eth2", "leaf2:eth1"]
 
-    # spine2
-    - endpoints: ["spine2:eth2", "leaf1:eth3"]
-    - endpoints: ["spine2:eth3", "leaf2:eth3"]
-    - endpoints: ["spine2:eth4", "leaf3:eth3"]
-    - endpoints: ["spine2:eth5", "leaf4:eth3"]
-
-    # leaf to leaf
-    - endpoints: ["leaf1:eth1", "leaf2:eth1"]
-    - endpoints: ["leaf1:eth6", "leaf2:eth6"]
-    # leaf to leaf
-    - endpoints: ["leaf3:eth1", "leaf4:eth1"]
-    - endpoints: ["leaf3:eth6", "leaf4:eth6"]
-
-    # leaf to host
-    - endpoints: ["leaf1:eth4", "host1:eth1"]
-    - endpoints: ["leaf1:eth5", "host1:eth3"]
-    - endpoints: ["leaf2:eth4", "host1:eth2"]
-    - endpoints: ["leaf2:eth5", "host1:eth4"]
-    - endpoints: ["leaf3:eth4", "host2:eth1"]
-    - endpoints: ["leaf3:eth5", "host2:eth3"]
-    - endpoints: ["leaf4:eth4", "host2:eth2"]
-    - endpoints: ["leaf4:eth5", "host2:eth4"]
+    - endpoints: ["leaf1:eth2", "host1:eth1"]
+    - endpoints: ["leaf2:eth2", "host2:eth1"]
