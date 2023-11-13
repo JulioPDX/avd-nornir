@@ -210,7 +210,7 @@ vlan 160
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
-| Ethernet2 |  host1_eth1 | access | 110 | - | - | - |
+| Ethernet2 |  host1_eth1 | access | 160 | - | - | - |
 
 *Inherited from Port-Channel Interface
 
@@ -234,7 +234,7 @@ interface Ethernet1
 interface Ethernet2
    description host1_eth1
    no shutdown
-   switchport access vlan 110
+   switchport access vlan 160
    switchport mode access
    switchport
 ```
