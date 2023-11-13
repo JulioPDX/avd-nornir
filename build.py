@@ -104,9 +104,9 @@ def main():
 
     create_files("docs", docs, "md")
 
-    result = nr.run(task=deploy_network)
+    # result = nr.run(task=deploy_network)
 
-    print_result(result)
+    # print_result(result)
 
 
 if __name__ == "__main__":
