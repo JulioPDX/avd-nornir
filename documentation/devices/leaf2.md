@@ -187,6 +187,7 @@ vlan internal order ascending range 1006 1199
 | VLAN ID | Name | Trunk Groups |
 | ------- | ---- | ------------ |
 | 110 | Tenant_A_OP_Zone_1 | - |
+| 111 | Tenant_A_OP_Zone_2 | - |
 | 160 | Tenant_A_VMOTION | - |
 
 ### VLANs Device Configuration
@@ -195,6 +196,9 @@ vlan internal order ascending range 1006 1199
 !
 vlan 110
    name Tenant_A_OP_Zone_1
+!
+vlan 111
+   name Tenant_A_OP_Zone_2
 !
 vlan 160
    name Tenant_A_VMOTION
@@ -210,7 +214,7 @@ vlan 160
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
-| Ethernet2 |  host2_eth1 | access | 160 | - | - | - |
+| Ethernet2 |  host2_eth1 | access | 111 | - | - | - |
 
 *Inherited from Port-Channel Interface
 
@@ -234,7 +238,7 @@ interface Ethernet1
 interface Ethernet2
    description host2_eth1
    no shutdown
-   switchport access vlan 160
+   switchport access vlan 111
    switchport mode access
    switchport
 ```
@@ -288,12 +292,14 @@ interface Loopback100
 | Interface | Description | VRF |  MTU | Shutdown |
 | --------- | ----------- | --- | ---- | -------- |
 | Vlan110 | Tenant_A_OP_Zone_1 | Tenant_A_OP_Zone | - | False |
+| Vlan111 | Tenant_A_OP_Zone_2 | Tenant_A_OP_Zone | - | False |
 
 ##### IPv4
 
 | Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
 | --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
 | Vlan110 |  Tenant_A_OP_Zone  |  -  |  10.1.10.1/24  |  -  |  -  |  -  |  -  |
+| Vlan111 |  Tenant_A_OP_Zone  |  -  |  10.1.11.1/24  |  -  |  -  |  -  |  -  |
 
 #### VLAN Interfaces Device Configuration
 
@@ -304,6 +310,12 @@ interface Vlan110
    no shutdown
    vrf Tenant_A_OP_Zone
    ip address virtual 10.1.10.1/24
+!
+interface Vlan111
+   description Tenant_A_OP_Zone_2
+   no shutdown
+   vrf Tenant_A_OP_Zone
+   ip address virtual 10.1.11.1/24
 ```
 
 ### VXLAN Interface
@@ -320,6 +332,7 @@ interface Vlan110
 | VLAN | VNI | Flood List | Multicast Group |
 | ---- | --- | ---------- | --------------- |
 | 110 | 10110 | - | - |
+| 111 | 10111 | - | - |
 | 160 | 55160 | - | - |
 
 ##### VRF to VNI and Multicast Group Mappings
@@ -337,6 +350,7 @@ interface Vxlan1
    vxlan source-interface Loopback1
    vxlan udp-port 4789
    vxlan vlan 110 vni 10110
+   vxlan vlan 111 vni 10111
    vxlan vlan 160 vni 55160
    vxlan vrf Tenant_A_OP_Zone vni 10
 ```
@@ -413,13 +427,12 @@ ip route 0.0.0.0/0 172.100.100.1
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65102|  192.0.255.4 |
+| 65102 | 192.0.255.4 |
 
 | BGP Tuning |
 | ---------- |
 | graceful-restart restart-time 300 |
 | graceful-restart |
-| update wait-install |
 | no bgp default ipv4-unicast |
 | distance bgp 20 200 200 |
 | maximum-paths 4 ecmp 4 |
@@ -464,7 +477,7 @@ ip route 0.0.0.0/0 172.100.100.1
 
 | VLAN Aware Bundle | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute | VLANs |
 | ----------------- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ | ----- |
-| Tenant_A_OP_Zone | 192.0.255.4:10 | 10:10 | - | - | learned | 110 |
+| Tenant_A_OP_Zone | 192.0.255.4:10 | 10:10 | - | - | learned | 110-111 |
 | Tenant_A_VMOTION | 192.0.255.4:55160 | 55160:55160 | - | - | learned | 160 |
 
 #### Router BGP VRFs
@@ -483,7 +496,6 @@ router bgp 65102
    graceful-restart restart-time 300
    graceful-restart
    maximum-paths 4 ecmp 4
-   update wait-install
    no bgp default ipv4-unicast
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
@@ -508,7 +520,7 @@ router bgp 65102
       rd 192.0.255.4:10
       route-target both 10:10
       redistribute learned
-      vlan 110
+      vlan 110-111
    !
    vlan-aware-bundle Tenant_A_VMOTION
       rd 192.0.255.4:55160

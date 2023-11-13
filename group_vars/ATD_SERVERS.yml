@@ -2,7 +2,11 @@
 port_profiles:
   - profile: TENANT_A
     mode: access
-    vlans: "160"
+    vlans: "110"
+
+  - profile: TENANT_A_ALT
+    mode: access
+    vlans: "111"
 
 
 servers:
@@ -23,7 +27,7 @@ servers:
       - endpoint_ports: [eth1]
         switch_ports: [Ethernet2]
         switches: [leaf2]
-        profile: TENANT_A
+        profile: TENANT_A_ALT
         # port_channel:
         #   description: PortChannel
         #   mode: active

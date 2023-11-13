@@ -17,9 +17,9 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision | Serial Number |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- | ------------- |
-| ATD_FABRIC | l3leaf | leaf1 | 172.100.100.13/24 | cEOS-lab | Provisioned | - |
-| ATD_FABRIC | l3leaf | leaf2 | 172.100.100.14/24 | cEOS-lab | Provisioned | - |
-| ATD_FABRIC | spine | spine1 | 172.100.100.11/24 | cEOS-lab | Provisioned | - |
+| ATD_FABRIC | l3leaf | leaf1 | 172.100.100.13/24 | cEOS | Provisioned | - |
+| ATD_FABRIC | l3leaf | leaf2 | 172.100.100.14/24 | cEOS | Provisioned | - |
+| ATD_FABRIC | spine | spine1 | 172.100.100.11/24 | cEOS | Provisioned | - |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.
 

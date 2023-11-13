@@ -1,3 +1,4 @@
+hostname: leaf1
 router_bgp:
   as: '65101'
   router_id: 192.0.255.3
@@ -11,8 +12,6 @@ router_bgp:
   maximum_paths:
     paths: 4
     ecmp: 4
-  updates:
-    wait_install: true
   graceful_restart:
     enabled: true
     restart_time: 300
@@ -75,7 +74,7 @@ router_bgp:
       - '10:10'
     redistribute_routes:
     - learned
-    vlan: '110'
+    vlan: 110-111
   - name: Tenant_A_VMOTION
     tenant: Tenant_A
     rd: 192.0.255.3:55160
@@ -149,7 +148,7 @@ ethernet_interfaces:
   shutdown: false
   type: switched
   mode: access
-  vlans: '160'
+  vlans: '110'
 loopback_interfaces:
 - name: Loopback0
   description: EVPN_Overlay_Peering
@@ -187,6 +186,9 @@ vlans:
 - id: 110
   name: Tenant_A_OP_Zone_1
   tenant: Tenant_A
+- id: 111
+  name: Tenant_A_OP_Zone_2
+  tenant: Tenant_A
 - id: 160
   name: Tenant_A_VMOTION
   tenant: Tenant_A
@@ -202,6 +204,14 @@ vlan_interfaces:
   shutdown: false
   ip_address_virtual: 10.1.10.1/24
   vrf: Tenant_A_OP_Zone
+- name: Vlan111
+  tenant: Tenant_A
+  tags:
+  - opzone
+  description: Tenant_A_OP_Zone_2
+  shutdown: false
+  ip_address_virtual: 10.1.11.1/24
+  vrf: Tenant_A_OP_Zone
 vxlan_interface:
   Vxlan1:
     description: leaf1_VTEP
@@ -211,6 +221,8 @@ vxlan_interface:
       vlans:
       - id: 110
         vni: 10110
+      - id: 111
+        vni: 10111
       - id: 160
         vni: 55160
       vrfs:
