@@ -2,7 +2,7 @@
 port_profiles:
   - profile: TENANT_A
     mode: access
-    vlans: "110"
+    vlans: "160"
 
 
 servers:

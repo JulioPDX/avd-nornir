@@ -1,0 +1,143 @@
+router_bgp:
+  as: '65001'
+  router_id: 192.0.255.1
+  distance:
+    external_routes: 20
+    internal_routes: 200
+    local_routes: 200
+  bgp:
+    default:
+      ipv4_unicast: false
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  updates:
+    wait_install: true
+  graceful_restart:
+    enabled: true
+    restart_time: 300
+  peer_groups:
+  - name: IPv4-UNDERLAY-PEERS
+    type: ipv4
+    password: AQQvKeimxJu+uGQ/yYvv9w==
+    maximum_routes: 12000
+    send_community: all
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Loopback0
+    bfd: true
+    password: q+VNViP5i4rVjW1cxFv2wA==
+    send_community: all
+    maximum_routes: 0
+    ebgp_multihop: 3
+    next_hop_unchanged: true
+  address_family_ipv4:
+    peer_groups:
+    - name: IPv4-UNDERLAY-PEERS
+      activate: true
+    - name: EVPN-OVERLAY-PEERS
+      activate: false
+  redistribute_routes:
+  - source_protocol: connected
+    route_map: RM-CONN-2-BGP
+  neighbors:
+  - ip_address: 172.30.255.1
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65101'
+    description: leaf1_Ethernet1
+  - ip_address: 172.30.255.3
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65102'
+    description: leaf2_Ethernet1
+  - ip_address: 192.0.255.3
+    peer_group: EVPN-OVERLAY-PEERS
+    description: leaf1
+    remote_as: '65101'
+  - ip_address: 192.0.255.4
+    peer_group: EVPN-OVERLAY-PEERS
+    description: leaf2
+    remote_as: '65102'
+  address_family_evpn:
+    peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
+static_routes:
+- vrf: default
+  destination_address_prefix: 0.0.0.0/0
+  gateway: 172.100.100.1
+service_routing_protocols_model: multi-agent
+ip_routing: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+ip_name_servers:
+- ip_address: 192.168.2.1
+  vrf: default
+- ip_address: 8.8.8.8
+  vrf: default
+spanning_tree:
+  mode: none
+local_users:
+- name: admin
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$GSDvwzmqiRb8Su2X$QIPBWzmhfnnzo4QIoKD7VRb3TvLL6687X.6/e4M.5Dw9iviTTDR.ZKaz7Q3Parul5i8rTgZ/.4ri/ny4El5Jx0
+vrfs:
+- name: default
+  ip_routing: false
+management_interfaces:
+- name: Management0
+  description: oob_management
+  shutdown: false
+  vrf: default
+  ip_address: 172.100.100.11/24
+  gateway: 172.100.100.1
+  type: oob
+management_api_http:
+  enable_vrfs:
+  - name: default
+  enable_http: true
+  enable_https: true
+ethernet_interfaces:
+- name: Ethernet1
+  peer: leaf1
+  peer_interface: Ethernet1
+  peer_type: l3leaf
+  description: P2P_LINK_TO_LEAF1_Ethernet1
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 172.30.255.0/31
+- name: Ethernet2
+  peer: leaf2
+  peer_interface: Ethernet1
+  peer_type: l3leaf
+  description: P2P_LINK_TO_LEAF2_Ethernet1
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 172.30.255.2/31
+loopback_interfaces:
+- name: Loopback0
+  description: EVPN_Overlay_Peering
+  shutdown: false
+  ip_address: 192.0.255.1/32
+prefix_lists:
+- name: PL-LOOPBACKS-EVPN-OVERLAY
+  sequence_numbers:
+  - sequence: 10
+    action: permit 192.0.255.0/24 eq 32
+route_maps:
+- name: RM-CONN-2-BGP
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    match:
+    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+router_bfd:
+  multihop:
+    interval: 1200
+    min_rx: 1200
+    multiplier: 3

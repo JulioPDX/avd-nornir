@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+clab-pyavd2/
 clab-pyavd/
 .lab.yml.bak
 

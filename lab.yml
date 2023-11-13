@@ -29,12 +29,12 @@ topology:
       kind: linux
       mgmt-ipv4: 172.100.100.23
       exec:
-        - ip a add 10.1.10.11/24 dev eth1
+        - ip a add 10.1.160.11/24 dev eth1
     host2:
       kind: linux
       mgmt-ipv4: 172.100.100.24
       exec:
-        - ip a add 10.1.10.12/24 dev eth1
+        - ip a add 10.1.160.12/24 dev eth1
   links:
     # spine1
     - endpoints: ["spine1:eth1", "leaf1:eth1"]

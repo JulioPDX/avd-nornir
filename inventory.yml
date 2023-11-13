@@ -11,8 +11,6 @@ all:
               hosts:
                 spine1:
                   ansible_host: 172.100.100.11
-                # spine2:
-                #   ansible_host: 172.100.100.12
             ATD_LEAFS:
               vars:
                 type: l3leaf
@@ -21,16 +19,10 @@ all:
                   hosts:
                     leaf1:
                       ansible_host: 172.100.100.13
-                    # leaf2:
-                    #   ansible_host: 172.100.100.14
                 pod2:
                   hosts:
                     leaf2:
                       ansible_host: 172.100.100.14
-                    # leaf3:
-                    #   ansible_host: 172.100.100.15
-                    # leaf4:
-                    #   ansible_host: 172.100.100.16
         ATD_TENANTS_NETWORKS:
           children:
             ATD_LEAFS:
@@ -54,4 +46,4 @@ all:
     # avd_data_conversion_mode: error
     # avd_data_validation_mode: error
     avd_ignore_requirements: True
-    # platform: eos
+    platform: eos

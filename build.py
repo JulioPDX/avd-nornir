@@ -6,14 +6,14 @@ from rich import print
 import pyavd
 
 
-# def deploy_network(task):
-#     """deploying stuff"""
-#     _deploy = task.run(
-#         name=f"{task.host.name}: Configuring with NAPALM",
-#         task=napalm_configure,
-#         filename=f"configs/{task.host.name}.cfg",
-#         replace=True,
-#     )
+def deploy_network(task):
+    """deploying stuff"""
+    _deploy = task.run(
+        name=f"{task.host.name}: Configuring with NAPALM",
+        task=napalm_configure,
+        filename=f"configs/{task.host.name}.cfg",
+        replace=True,
+    )
 
 
 def patch_pyeapi_ciphers():
@@ -104,9 +104,9 @@ def main():
 
     create_files("docs", docs, "md")
 
-    # result = nr.run(task=deploy_network)
+    result = nr.run(task=deploy_network)
 
-    # print_result(result)
+    print_result(result)
 
 
 if __name__ == "__main__":
