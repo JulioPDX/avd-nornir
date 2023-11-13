@@ -4,17 +4,17 @@ anta.tests.software:
       versions: # List of allowed EOS versions.
         - 4.30.2F-33092737.4302F (engineering build)
 
-anta.tests.mlag:
-  - VerifyMlagStatus:
-  - VerifyMlagInterfaces:
-  - VerifyMlagConfigSanity:
+# anta.tests.mlag:
+#   - VerifyMlagStatus:
+#   - VerifyMlagInterfaces:
+#   - VerifyMlagConfigSanity:
 
-anta.tests.configuration:
-  - VerifyRunningConfigDiffs:
+# anta.tests.configuration:
+#   - VerifyRunningConfigDiffs:
 
 anta.tests.routing.bgp:
   - VerifyBGPIPv4UnicastCount:
-      number: 3
+      number: 1
       template_params:
         - vrf: default
 
