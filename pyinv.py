@@ -10,7 +10,7 @@ dl = DataLoader()
 im = InventoryManager(loader=dl, sources=["inventory.yml"])
 vm = VariableManager(loader=dl, inventory=im)
 
-hosts = dict()
+hosts = {}
 
 for host in im.get_hosts("all"):
     host_vars = vm.get_vars(host=host)
