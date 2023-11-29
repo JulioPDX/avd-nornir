@@ -14,17 +14,22 @@ from pyavd import (
 from rich import print
 
 
+# Recreating the inventory objects to be like  Ansible
 dl = DataLoader()
 im = InventoryManager(loader=dl, sources=["inventory.yml"])
 vm = VariableManager(loader=dl, inventory=im)
 
 hosts = {}
 
+# grab all the hosts and add the hostname with relevant
+# variables to the hosts dictionary
+# deep copy required to make sure information is not overwritten
 for host in im.get_hosts("all"):
     host_vars = vm.get_vars(host=host)
     hosts[str(host)] = copy.deepcopy(host_vars)
 
 with Progress() as progress:
+    # progress bars for pretty output
     total = len(hosts)
     task1 = progress.add_task("[red]facts...", total=1)
     task2 = progress.add_task("[blue]validate inputs...", total=total)
@@ -35,6 +40,8 @@ with Progress() as progress:
     progress.update(task1, advance=1)
     time.sleep(0.5)
 
+    # loop to check the state of validate status and print
+    # any errors
     for k, v in hosts.items():
         validate = validate_inputs(v)
         if validate.failed:
