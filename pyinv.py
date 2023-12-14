@@ -1,6 +1,8 @@
 import copy
+import difflib
+import io
 import sys
-import time
+from pathlib import Path
 from ansible.inventory.manager import InventoryManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars.manager import VariableManager
@@ -38,26 +40,44 @@ with Progress() as progress:
 
     facts = get_avd_facts(hosts)
     progress.update(task1, advance=1)
-    time.sleep(0.5)
 
     # loop to check the state of validate status and print
     # any errors
     for k, v in hosts.items():
         validate = validate_inputs(v)
+
         if validate.failed:
             print(f"The following validation errors were seen for {k}")
             for issue in validate.validation_errors:
                 print(issue)
             sys.exit(1)
         progress.update(task2, advance=1)
-        time.sleep(0.5)
 
         struct_conf = get_device_structured_config(k, v, facts)
         progress.update(task3, advance=1)
-        time.sleep(0.5)
 
         config = get_device_config(struct_conf)
-        with open(f"py_conf/{k}.cfg", "w") as f:
-            f.writelines(config)
+        buf = io.StringIO(config)
+        print(k)
+
+        # Make sure path exists, create if not
+        path = "py_conf"
+        if not Path(path).exists():
+            Path(path).mkdir(parents=True)
+
+        # quick example to show diffs in files
+        try:
+            with open(f"py_conf/{k}.cfg") as file:
+                old = file.readlines()
+
+            for line in difflib.unified_diff(old, buf.readlines(), lineterm=""):
+                print(line)
+
+            with open(f"py_conf/{k}.cfg", "w") as f:
+                f.writelines(config)
+
+        except FileNotFoundError:
+            with open(f"py_conf/{k}.cfg", "w") as f:
+                f.writelines(config)
+
         progress.update(task4, advance=1)
-        time.sleep(0.5)
